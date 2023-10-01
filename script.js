@@ -16,66 +16,81 @@ function getComputerChoice() {
     return [rndNum, cmptChoice]
 }
 
-function getUserChoice() {
-    
-    let validChoice = true;
-    let userChoice = "";
-    let userChoiceNum = 0;
-
-    do {
-        validChoice = true;
-        userChoice = prompt("Please make a choice").toLowerCase();
-        userChoiceNum = 0
-        if(userChoice == "rock"){
-            userChoiceNum = 0;
-        } else if(userChoice == "paper"){
-            userChoiceNum = 1;
-        } else if(userChoice == "scissors"){
-            userChoiceNum = 2;
-        } else{
-            validChoice = false;
-        }
-    } while(validChoice == false);
-
-    /* console.log([userChoiceNum, userChoice]) */
-    return [userChoiceNum, userChoice];
-}
-
-function game(turns){
-
+function choice(e){
     let vicMatrix = [[0, -1, 1], [1, 0, -1], [-1, 1, 0]]
-    let userWins = 0;
-    let cmptWins = 0;
 
-    while(turns > userWins && turns > cmptWins){
-
-        let userPlay = getUserChoice();
-        let cmptPlay = getComputerChoice();
-
-        console.log(`User picks ${userPlay[1]} - Computer picks ${cmptPlay[1]}`);
-
-        let winCondition = vicMatrix[userPlay[0]][cmptPlay[0]];
-
-        if (winCondition == 1){
-            userWins++;
-            console.log("User wins the round");
-        } else if(winCondition == -1){
-            cmptWins++;
-            console.log("Computer wins the round");
-        } else{
-            console.log("Tie!")
-        }
-
-        console.log(`User ${userWins} - Computer ${cmptWins}`)
+    if(counter === 0){
+        resetFunction();
     }
 
-    let result = `${userWins} - ${cmptWins}`
-    if(userWins > cmptWins){
-        console.log(`User wins ${result}`)
-        return 
-    } else{
-        console.log(`User loses ${result}`)
+    let choiceValue = e.target.id;
+    let computerValue = getComputerChoice();
+    userChoice.textContent = choiceValue;
+    computerChoice.textContent = computerValue[1];
+    
+    let userChoiceNum = 0;
+    if(choiceValue == "rock"){
+        userChoiceNum = 0;
+    } else if(choiceValue == "paper"){
+        userChoiceNum = 1;
+    } else if(choiceValue == "scissor"){
+        userChoiceNum = 2;
+    }
+    
+    let winCondition = vicMatrix[userChoiceNum][computerValue[0]];
+
+    if (winCondition == 1){
+        userWins++;
+    } else if(winCondition == -1){
+        cmptWins++;
+    };
+
+    message.textContent = `User ${userWins} - Computer ${cmptWins}`
+
+    counter += 1;
+    // console.log(counter)
+
+    if (cmptWins === 5 | userWins === 5){
+        message.textContent = "game ended";
+
+        let result = `${userWins} - ${cmptWins}`
+        if(userWins > cmptWins){
+            message.textContent =`User wins ${result}`; 
+        } else{
+            message.textContent =`User loses ${result}`;
+        }
+
+        counter = 0;
+        cmptWins = 0;
+        userWins = 0;
     }
 }
 
-game(3)
+function resetFunction() {
+    counter = 0;
+    userWins = 0;
+    cmptWins = 0;
+    message.textContent = "-";
+    userChoice.textContent = "-";
+    computerChoice.textContent = "-";
+}
+
+let counter = 0;
+let userWins = 0;
+let cmptWins = 0;
+
+let rock = document.getElementById("rock");
+rock.addEventListener("click", choice);
+
+let scissor = document.getElementById("scissor");
+scissor.addEventListener("click", choice);
+
+let paper = document.getElementById("paper");
+paper.addEventListener("click", choice);
+
+let userChoice = document.getElementById("userChoice");
+let computerChoice = document.getElementById("computerChoice");
+let message = document.getElementById("message");
+
+let reset = document.getElementById("reset");
+reset.addEventListener("click", resetFunction);
